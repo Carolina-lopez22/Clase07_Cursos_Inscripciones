@@ -52,28 +52,7 @@ public class InscripcionDAO {
      *    ANTES del catch de SQLException general). Atrapala y retorna -1 en
      *    vez de dejar que el error se propague sin explicacion.
      */
-    public int inscribir(int estudianteId, int cursoId) throws SQLException {
-    	        String sql = "INSERT INTO estudiantes (estudiante_id, curso_id) VALUES (?, ?)";
-    	// Agregue los datos nuevos a guardar
-    	        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
-    	             PreparedStatement statement = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-    	//Agregue los datos faltantes para que se puedan pasar del objeto a la consulta SQL cuando guarde un estudiante. 
-    	        	
-    	            statement.setInt(1, estudiante.getNombre());
-    	            statement.setInt(2, estudiante.getCurso());
-    	            statement.executeUpdate();
-
-    	            // IMPORTANTE: RETURN_GENERATED_KEYS + getGeneratedKeys() es como se
-    	            // recupera el id autoincremental que genero MySQL, sin hacer un
-    	            // SELECT aparte para buscarlo.
-    	            try (ResultSet claves = statement.getGeneratedKeys()) {
-    	                if (claves.next()) {
-    	                    return claves.getInt(1);
-    	                }
-    	                return -1;
-    	            }
-    	        }
-    	    }
+    public int inscribir(int estudianteId, int cursoId) throws SQLException {      
         // TODO: completar (ver pistas arriba). Recuerda el catch especifico
         // para inscripciones duplicadas antes del catch general.
         return -1;
