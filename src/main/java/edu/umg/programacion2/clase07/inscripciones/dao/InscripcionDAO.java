@@ -30,7 +30,7 @@ public class InscripcionDAO {
 
     private static final String URL = "jdbc:mysql://localhost:3306/prog2_db?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "tu_password_aqui";
+    private static final String PASSWORD = "49577";
 
     /**
      * Inscribe a un estudiante en un curso. Retorna el id generado.
@@ -52,11 +52,30 @@ public class InscripcionDAO {
      *    ANTES del catch de SQLException general). Atrapala y retorna -1 en
      *    vez de dejar que el error se propague sin explicacion.
      */
-    public int inscribir(int estudianteId, int cursoId) throws SQLException {      
-        // TODO: completar (ver pistas arriba). Recuerda el catch especifico
+    public int inscribir(int estudianteId, int cursoId) throws SQLException {  
+    	 String sql = "INSERT INTO inscripciones (estudiante_id, curso_id) VALUES (?, ?)";
+    	 
+    	        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+    	             PreparedStatement statement = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    	        	
+    	            statement.setInt(1, estudianteId);
+    	            statement.setInt(2, cursoId);
+    	            
+    	            statement.executeUpdate();
+    	            // IMPORTANTE: RETURN_GENERATED_KEYS + getGeneratedKeys() es como se
+    	            // recupera el id autoincremental que genero MySQL, sin hacer un
+    	            // SELECT aparte para buscarlo.
+    	            try (ResultSet claves = statement.getGeneratedKeys()) {
+    	                if (claves.next()) {
+    	                    return claves.getInt(1);
+    	                }
+        //  completar (ver pistas arriba). Recuerda el catch especifico
         // para inscripciones duplicadas antes del catch general.
         return -1;
+    	            }
+    	        }
     }
+    	      
 
     /**
      * Registra (o actualiza) la nota de un estudiante en un curso.
