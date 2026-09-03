@@ -88,7 +88,7 @@ public class InscripcionDAO {
      *    EstudianteDAO.actualizarNombre en la Clase 5).
      */
     public boolean registrarNota(int estudianteId, int cursoId, double nota) throws SQLException {
-    	 String sql = "UPDATE estudiantes SET nota = ? WHERE estudiante_id = ? AND curso_id = ?";
+    	 String sql = "UPDATE inscripciones SET nota = ? WHERE estudiante_id = ? AND curso_id = ?";
 
          try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
               PreparedStatement statement = conexion.prepareStatement(sql)) {
@@ -100,8 +100,8 @@ public class InscripcionDAO {
              int filasAfectadas = statement.executeUpdate();
              return filasAfectadas > 0;
          }
- //TODO: revisar este error que me genera el metodo
- //Error al registrar la nota: Unknown column 'estudiante_id' in 'where clause'
+ //Metodo trabajado, el error estaba en la linea 91, estaba indicando UPDATE estudiantes y no a inscripciones
+ //Metodo completado usando el mismo patron de EstudianteDAO.
     }
 
     /**
