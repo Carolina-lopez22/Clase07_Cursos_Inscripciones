@@ -30,7 +30,7 @@ public class InscripcionDAO {
 
     private static final String URL = "jdbc:mysql://localhost:3306/prog2_db?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "tu_password_aqui";
+    private static final String PASSWORD = "Jose123";
 
     /**
      * Inscribe a un estudiante en un curso. Retorna el id generado.
@@ -95,12 +95,37 @@ public class InscripcionDAO {
      *    ResultSet que viene de un JOIN.
      */
     public List<Curso> listarCursosDeEstudiante(String carnet) throws SQLException {
+
         List<Curso> resultado = new ArrayList<>();
-        // TODO: completar (ver pista del JOIN de 3 tablas arriba).
+
+        String sql = "SELECT c.id, c.nombre, c.creditos "
+                   + "FROM inscripciones i "
+                   + "JOIN cursos c ON i.curso_id = c.id "
+                   + "JOIN estudiantes e ON i.estudiante_id = e.id "
+                   + "WHERE e.carnet = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, carnet);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Curso curso = new Curso(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getInt("creditos")
+                    );
+
+                    resultado.add(curso);
+                }
+            }
+        }
 
         return resultado;
     }
-
+    
     /**
      * Lista los estudiantes inscritos en un curso, dado su nombre.
      *
