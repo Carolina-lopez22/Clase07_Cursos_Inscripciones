@@ -62,21 +62,18 @@ public class InscripcionDAO {
     	            statement.setInt(2, cursoId);
     	            
     	            statement.executeUpdate();
-    	            // IMPORTANTE: RETURN_GENERATED_KEYS + getGeneratedKeys() es como se
-    	            // recupera el id autoincremental que genero MySQL, sin hacer un
-    	            // SELECT aparte para buscarlo.
+    	           
     	            try (ResultSet claves = statement.getGeneratedKeys()) {
     	                if (claves.next()) {
     	                    return claves.getInt(1);
     	                }
-        //  completar (ver pistas arriba). Recuerda el catch especifico
-        // para inscripciones duplicadas antes del catch general.
+        // Metodo para inscribir creado, reutilizando codigo de la clase estudianteDAO
+    	// cambiando el INSERT INTO para que guarde las respectivas inscripciones que deseemos crear,
+    	// asi mismo se creo la asignacion de parametros para que se establezcan los valores recibidos.
         return -1;
     	            }
     	        }
-    }
-    	      
-
+    }   	      
     /**
      * Registra (o actualiza) la nota de un estudiante en un curso.
      *
@@ -91,8 +88,20 @@ public class InscripcionDAO {
      *    EstudianteDAO.actualizarNombre en la Clase 5).
      */
     public boolean registrarNota(int estudianteId, int cursoId, double nota) throws SQLException {
-        // TODO: completar.
-        return false;
+    	 String sql = "UPDATE estudiantes SET nota = ? WHERE estudiante_id = ? AND curso_id = ?";
+
+         try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+              PreparedStatement statement = conexion.prepareStatement(sql)) {
+
+             statement.setDouble(1, nota);
+             statement.setInt(2, estudianteId);
+             statement.setInt(3, cursoId); 
+             
+             int filasAfectadas = statement.executeUpdate();
+             return filasAfectadas > 0;
+         }
+ //TODO: revisar este error que me genera el metodo
+ //Error al registrar la nota: Unknown column 'estudiante_id' in 'where clause'
     }
 
     /**
