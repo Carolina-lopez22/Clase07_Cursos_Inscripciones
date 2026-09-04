@@ -155,22 +155,38 @@ public class InscripcionDAO {
         return resultado;
     }
     
-    /**
-     * Lista los estudiantes inscritos en un curso, dado su nombre.
-     *
-     * Ejemplo: listarEstudiantesDeCurso("Programacion 2") devuelve Ana
-     * Lopez, Carlos Perez y Maria Gonzalez (en los datos de ejemplo).
-     *
-     * Pistas: es el JOIN "espejo" del metodo anterior - misma idea, pero
-     * seleccionando columnas de `estudiantes` y filtrando por `c.nombre`.
-     */
     public List<Estudiante> listarEstudiantesDeCurso(String nombreCurso) throws SQLException {
+
         List<Estudiante> resultado = new ArrayList<>();
-        // TODO: completar.
+
+        String sql = "SELECT e.id, e.nombre, e.carnet "
+                   + "FROM inscripciones i "
+                   + "JOIN estudiantes e ON i.estudiante_id = e.id "
+                   + "JOIN cursos c ON i.curso_id = c.id "
+                   + "WHERE c.nombre = ?";
+
+        try (Connection conn = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nombreCurso);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+
+                    Estudiante estudiante = new Estudiante(
+                            rs.getInt("id"),
+                            rs.getString("nombre"),
+                            rs.getString("carnet")
+                    );
+
+                    resultado.add(estudiante);
+                }
+            }
+        }
 
         return resultado;
     }
-
     /**
      * Calcula el promedio de notas de un estudiante (solo cursos que YA
      * tienen nota registrada).
