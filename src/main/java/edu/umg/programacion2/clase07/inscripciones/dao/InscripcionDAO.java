@@ -30,7 +30,7 @@ public class InscripcionDAO {
 
     private static final String URL = "jdbc:mysql://localhost:3306/prog2_db?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "tu_password_aqui";
+    private static final String PASSWORD = "gigidb";
 
     /**
      * Inscribe a un estudiante en un curso. Retorna el id generado.
@@ -140,7 +140,32 @@ public class InscripcionDAO {
      *    Optional.empty().
      */
     public Optional<Double> promedioDeEstudiante(String carnet) throws SQLException {
-        // TODO: completar (ver pistas arriba, especialmente el caso NULL).
+
+        String sql = "SELECT AVG(i.nota) AS promedio "
+                   + "FROM inscripciones i "
+                   + "JOIN estudiantes e ON i.estudiante_id = e.id "
+                   + "WHERE e.carnet = ?";
+
+        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
+             PreparedStatement sentencia = conexion.prepareStatement(sql)) {
+
+            sentencia.setString(1, carnet);
+
+            try (ResultSet resultado = sentencia.executeQuery()) {
+
+                if (resultado.next()) {
+
+                    Object promedio = resultado.getObject("promedio");
+
+                    if (promedio == null) {
+                        return Optional.empty();
+                    }
+
+                    return Optional.of(((Number) promedio).doubleValue());
+                }
+            }
+        }
+
         return Optional.empty();
     }
 
