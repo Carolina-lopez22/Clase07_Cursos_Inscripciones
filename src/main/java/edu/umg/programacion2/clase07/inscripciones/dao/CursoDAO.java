@@ -22,6 +22,7 @@ public class CursoDAO {
     private static final String USUARIO = "root";
     private static final String PASSWORD = "Contraseña_aqui";
 
+
     public int crear(Curso curso) throws SQLException {
         String sql = "INSERT INTO cursos (nombre, creditos) VALUES (?, ?)";
 
